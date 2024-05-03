@@ -1,11 +1,27 @@
+body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 .container {
   position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-width: 800px;
   bottom: 0;
-  left: 50%; /* Center the container horizontally */
-  transform: translateX(-50%); /* Translate back 50% of the container width */
-  width: 600px;
-  height: 100%;
   margin: 0 auto;
+  z-index: 10;
+}
+
+.submissionsContainer {
+  position: relative; /* If it needs to be relative to an outer container */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;          /* Keeps the width to 80% of the parent element */
+  max-width: 800px;    /* Ensures it does not extend beyond 800px */
+  overflow-y: auto;    /* Just in case the content overflows */
 }
 
 .textareaContainer {
@@ -13,12 +29,10 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  min-height: 1em;
-  max-height: 20em;
   border: 1px solid #ccc;
   border-radius: 10px;
-  padding-left: 10px;
-  overflow-y: auto;
+  background-color: white;
+  overflow: hidden;
   transition: border-color 0.3s ease-in-out;
 }
 
@@ -26,19 +40,15 @@
   border-color: #7c7c7c;
 }
 
-.textareaInnerContainer {
-  width: 90%;
-  min-height: 1em;
-  overflow-y: hidden;
-  resize: none;
-}
-
 .resizable {
-  width: 100%;
+  width: calc(100% - 50px);
   min-height: 1em;
   overflow-y: auto;
+  margin-bottom: 0.2em;
+  margin-top: 0.2em;
   border: none;
   outline: none;
+  padding: 10px;
 }
 
 .btnSubmit {
@@ -47,32 +57,47 @@
   align-items: center;
   width: 40px;
   height: 40px;
-  padding: 5px;
+  padding: 0;
   background: none;
   border: none;
-  align-self: flex-end;
+  cursor: pointer;
 }
 
-.submissionsContainer {
-  width: 100%;
-  padding-bottom: 100px; /* Adjust this value as needed */
-}
-
-/* Styles for the scrollbar */
-.textareaContainer::-webkit-scrollbar {
+.textareaContainer::-webkit-scrollbar,
+.submissionsContainer::-webkit-scrollbar {
   width: 12px;
 }
 
-.textareaContainer::-webkit-scrollbar-track {
+.textareaContainer::-webkit-scrollbar-track,
+.submissionsContainer::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 6px;
 }
 
-.textareaContainer::-webkit-scrollbar-thumb {
+.textareaContainer::-webkit-scrollbar-thumb,
+.submissionsContainer::-webkit-scrollbar-thumb {
   background: #888;
-  border-radius: 10px;
+  border-radius: 6px;
 }
 
-.textareaContainer::-webkit-scrollbar-thumb:hover {
+.textareaContainer::-webkit-scrollbar-thumb:hover,
+.submissionsContainer::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+.persona {
+  margin-bottom: 0;
+  font-weight: bold;
+}
+
+.message {
+  margin-top: 0.5em;
+}
+
+.submissionsContainer div {
+  margin-bottom: 1.5em;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
 }
