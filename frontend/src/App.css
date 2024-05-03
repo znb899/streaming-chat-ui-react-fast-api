@@ -1,0 +1,78 @@
+.container {
+  position: fixed;
+  bottom: 0;
+  left: 50%; /* Center the container horizontally */
+  transform: translateX(-50%); /* Translate back 50% of the container width */
+  width: 600px;
+  height: 100%;
+  margin: 0 auto;
+}
+
+.textareaContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  min-height: 1em;
+  max-height: 20em;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding-left: 10px;
+  overflow-y: auto;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.textareaContainer.active {
+  border-color: #7c7c7c;
+}
+
+.textareaInnerContainer {
+  width: 90%;
+  min-height: 1em;
+  overflow-y: hidden;
+  resize: none;
+}
+
+.resizable {
+  width: 100%;
+  min-height: 1em;
+  overflow-y: auto;
+  border: none;
+  outline: none;
+}
+
+.btnSubmit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 5px;
+  background: none;
+  border: none;
+  align-self: flex-end;
+}
+
+.submissionsContainer {
+  width: 100%;
+  padding-bottom: 100px; /* Adjust this value as needed */
+}
+
+/* Styles for the scrollbar */
+.textareaContainer::-webkit-scrollbar {
+  width: 12px;
+}
+
+.textareaContainer::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 6px;
+}
+
+.textareaContainer::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.textareaContainer::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
