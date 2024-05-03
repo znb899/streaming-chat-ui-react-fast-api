@@ -1,50 +1,60 @@
 import React, { useState, useRef } from 'react';
-import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import './App.css';
 
-function Message({ message }) {
-  return (
-    <p>
-      <strong>{message.direction === 'ai' ? 'Bot: ' : ''}</strong>
-      {message.content}
-    </p>
-  )
-}
-
 function App() {
   const [isActive, setActive] = useState(false);
-  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
   const inputRef = useRef();
-  const decoder = new TextDecoder('utf-8');
+  const submissionsContainerRef = useRef();
 
-  const handleSubmit = () => {
-    const text = inputRef.current.innerText;
+  const handleSubmit = async () => {
+    let text = inputRef.current.innerText;
+    setLoading(true);
+
     if (text.trim() !== '') {
-      const humanMessage = {direction: 'human', content: text};
+      // Create and append "You" message div
+      var youDiv = document.createElement('div');
       inputRef.current.innerText = '';
-      setMessages(currentMessages => [...currentMessages, humanMessage]);
+      youDiv.innerHTML = `<p class='persona'>You</p><p class='message'>${text}</p>`;
+      submissionsContainerRef.current.appendChild(youDiv);
       
-      const source = axios.CancelToken.source();
-    
-      axios.post('http://localhost:5000/api/completion', {'message': text}, {
-        cancelToken: source.token,
-        responseType: 'stream',
-        timeout: 60000,
-      }).then(response => {
-        const reader = response.data.body.getReader();
-        const streamData = reader.read();
-        streamData.then(data => {
-          const aiMessage = {direction: 'ai', content: decoder.decode(data.value)};
-          setMessages(currentMessages => [...currentMessages, aiMessage]);
+      // Create "Bot" message div
+      var botDiv = document.createElement('div');
+      botDiv.id = 'bot-message';
+
+      try {
+        const response = await fetch('/api/completion', {
+          method: 'POST',
+          body: JSON.stringify({'message': text}),
+          headers: {
+           'Content-Type': 'application/json'
+          }
         });
-      });
+        
+        const reader = response.body.getReader();
+        var botText = '';
+        while (true) {
+          const {done, value} = await reader.read();
+          if (done) break;
+          let resText = new TextDecoder().decode(value);
+          botText += resText;
+          botDiv.innerHTML = `<p class='persona'>Bot</p><p class='message'>${botText}</p>`;
+          submissionsContainerRef.current.appendChild(botDiv); // Append bot's message to the submissions container
+        }
+        
+      } catch (error) {
+        console.error(error);
+      }
+      
+      document.getElementById('bot-message').removeAttribute('id'); // Remove 'id' attribute from the bot message
+      setLoading(false);
     }
   }
 
   const handleKeyPress = (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key === 'Enter' && !event.shiftKey && !loading) {
       handleSubmit();
       event.preventDefault(); // Prevent adding a newline character
     }
@@ -57,32 +67,27 @@ function App() {
   }
 
   return (
-    <div className='container'>
-      <div className='submissionsContainer'>
-        {messages.map((message, index) => (
-          <Message key={index} message={message} />
-        ))}
+    <div>
+      <div ref={submissionsContainerRef} className="submissionsContainer">
+        {/* Submissions will be placed here */}
       </div>
-      <div className={`textareaContainer ${isActive ? 'active' : ''}`} >
-        <div className='textareaInnerContainer'>
+
+      <div className="container">
+        <div className={`textareaContainer ${isActive ? "active" : ""}`}>
           <p
             ref={inputRef}
-            className='resizable'
+            className="resizable"
             onFocus={() => setActive(true)}
             onBlur={() => setActive(false)}
-            onPaste={handlePaste} // Modify this function according to the CSS adjustment below
-            onKeyPress={handleKeyPress}
+            onPaste={(e) => handlePaste(e)}
+            onKeyPress={(e) => handleKeyPress(e)}
             contentEditable="true"
-            autoFocus // Add this line to auto-focus the textarea
+            autoFocus
           />
+          <button type="button" className="btnSubmit" onClick={handleSubmit} disabled={loading}>
+            <FontAwesomeIcon icon={faPaperPlane} />
+          </button>
         </div>
-        <button
-          type='button'
-          className='btnSubmit'
-          onClick={handleSubmit}
-        >
-          <FontAwesomeIcon icon={faPaperPlane} />
-        </button>
       </div>
     </div>
   );
