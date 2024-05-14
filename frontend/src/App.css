@@ -22,6 +22,7 @@ body, html {
   width: 80%;          /* Keeps the width to 80% of the parent element */
   max-width: 800px;    /* Ensures it does not extend beyond 800px */
   overflow-y: auto;    /* Just in case the content overflows */
+  padding-bottom: 3em;
 }
 
 .textareaContainer {
@@ -88,6 +89,7 @@ body, html {
 .persona {
   margin-bottom: 0;
   font-weight: bold;
+  color:rgb(0, 144, 96);
 }
 
 .message {
